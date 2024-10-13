@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@astrojs/check':
         specifier: ^0.9.3
-        version: 0.9.3(typescript@5.5.4)
+        version: 0.9.3(prettier-plugin-astro@0.14.1)(prettier@3.3.3)(typescript@5.5.4)
       '@astrojs/mdx':
         specifier: ^3.1.4
         version: 3.1.4(astro@4.14.3(rollup@4.21.0)(typescript@5.5.4))
@@ -47,12 +47,25 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      react-rough-notation:
+        specifier: ^1.0.5
+        version: 1.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      rough-notation:
+        specifier: ^0.5.1
+        version: 0.5.1
       tailwindcss:
         specifier: ^3.4.10
         version: 3.4.10
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
+    devDependencies:
+      prettier-plugin-astro:
+        specifier: ^0.14.1
+        version: 0.14.1
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.10)
 
 packages:
 
@@ -2128,9 +2141,18 @@ packages:
     resolution: {integrity: sha512-gYBeFTZLu055D8Vv3cSPox/0iTPtkzxpLroSYYA7WXgRi31WCJ51Uyl8ZiPeUUjyvs2MBzK+S8v9JVUgHU/Sqw==}
     engines: {node: '>=18.12'}
 
+  prettier-plugin-astro@0.14.1:
+    resolution: {integrity: sha512-RiBETaaP9veVstE4vUwSIcdATj6dKmXljouXc/DDNwBSPTp8FRkLGDSGFClKsAFeeg+13SB0Z1JZvbD76bigJw==}
+    engines: {node: ^14.15.0 || >=16.0.0}
+
   prettier@2.8.7:
     resolution: {integrity: sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==}
     engines: {node: '>=10.13.0'}
+    hasBin: true
+
+  prettier@3.3.3:
+    resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
+    engines: {node: '>=14'}
     hasBin: true
 
   prismjs@1.29.0:
@@ -2155,6 +2177,12 @@ packages:
   react-refresh@0.14.2:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
     engines: {node: '>=0.10.0'}
+
+  react-rough-notation@1.0.5:
+    resolution: {integrity: sha512-TTDnw1Qn96PwitGsBsjNh4911+o26Vivj/dhHbsHHhN6lDgkQsFhv1X/eOnCjHA2EOyDE5JBQ1HEZ1yW8sCmKA==}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
 
   react@18.3.1:
     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
@@ -2254,11 +2282,20 @@ packages:
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
+  rough-notation@0.5.1:
+    resolution: {integrity: sha512-ITHofTzm13cWFVfoGsh/4c/k2Mg8geKgBCwex71UZLnNuw403tCRjYPQ68jSAd37DMbZIePXPjDgY0XdZi9HPw==}
+
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
+  s.color@0.0.15:
+    resolution: {integrity: sha512-AUNrbEUHeKY8XsYr/DYpl+qk5+aM+DChopnWOPEzn8YKzOhv4l2zH6LzZms3tOZP3wwdOyc0RmTciyi46HLIuA==}
+
   safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
+
+  sass-formatter@0.7.9:
+    resolution: {integrity: sha512-CWZ8XiSim+fJVG0cFLStwDvft1VI7uvXdCNJYXhDvowiv+DsbD1nXLiQ4zrE5UBvj5DWZJ93cwN0NX5PMsr1Pw==}
 
   sax@1.4.1:
     resolution: {integrity: sha512-+aWOz7yVScEGoKNd4PA10LZ8sk0A/z5+nXQG5giUO5rprX9jgYsTdov9qCchZiPIZezbZH+jRut8nPodFAX4Jg==}
@@ -2391,6 +2428,9 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     hasBin: true
 
+  suf-log@2.5.3:
+    resolution: {integrity: sha512-KvC8OPjzdNOe+xQ4XWJV2whQA0aM1kGVczMQ8+dStAO6KfEB140JEVQ9dE76ONZ0/Ylf67ni4tILPJB41U0eow==}
+
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
     engines: {node: '>=4'}
@@ -2398,6 +2438,11 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  tailwindcss-animate@1.0.7:
+    resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
 
   tailwindcss@3.4.10:
     resolution: {integrity: sha512-KWZkVPm7yJRhdu4SRSl9d4AK2wM3a50UsvgHZO7xY77NQr2V+fIrEuoDGQcbvswWvFGbS2f6e+jC/6WJm1Dl0w==}
@@ -2775,9 +2820,9 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@astrojs/check@0.9.3(typescript@5.5.4)':
+  '@astrojs/check@0.9.3(prettier-plugin-astro@0.14.1)(prettier@3.3.3)(typescript@5.5.4)':
     dependencies:
-      '@astrojs/language-server': 2.14.1(typescript@5.5.4)
+      '@astrojs/language-server': 2.14.1(prettier-plugin-astro@0.14.1)(prettier@3.3.3)(typescript@5.5.4)
       chokidar: 3.6.0
       fast-glob: 3.3.2
       kleur: 4.1.5
@@ -2791,7 +2836,7 @@ snapshots:
 
   '@astrojs/internal-helpers@0.4.1': {}
 
-  '@astrojs/language-server@2.14.1(typescript@5.5.4)':
+  '@astrojs/language-server@2.14.1(prettier-plugin-astro@0.14.1)(prettier@3.3.3)(typescript@5.5.4)':
     dependencies:
       '@astrojs/compiler': 2.10.3
       '@astrojs/yaml2ts': 0.2.1
@@ -2806,12 +2851,15 @@ snapshots:
       volar-service-css: 0.0.61(@volar/language-service@2.4.0)
       volar-service-emmet: 0.0.61(@volar/language-service@2.4.0)
       volar-service-html: 0.0.61(@volar/language-service@2.4.0)
-      volar-service-prettier: 0.0.61(@volar/language-service@2.4.0)
+      volar-service-prettier: 0.0.61(@volar/language-service@2.4.0)(prettier@3.3.3)
       volar-service-typescript: 0.0.61(@volar/language-service@2.4.0)
       volar-service-typescript-twoslash-queries: 0.0.61(@volar/language-service@2.4.0)
       volar-service-yaml: 0.0.61(@volar/language-service@2.4.0)
       vscode-html-languageservice: 5.3.0
       vscode-uri: 3.0.8
+    optionalDependencies:
+      prettier: 3.3.3
+      prettier-plugin-astro: 0.14.1
     transitivePeerDependencies:
       - typescript
 
@@ -5236,8 +5284,16 @@ snapshots:
       find-yarn-workspace-root2: 1.2.16
       which-pm: 3.0.0
 
+  prettier-plugin-astro@0.14.1:
+    dependencies:
+      '@astrojs/compiler': 2.10.3
+      prettier: 3.3.3
+      sass-formatter: 0.7.9
+
   prettier@2.8.7:
     optional: true
+
+  prettier@3.3.3: {}
 
   prismjs@1.29.0: {}
 
@@ -5257,6 +5313,12 @@ snapshots:
       scheduler: 0.23.2
 
   react-refresh@0.14.2: {}
+
+  react-rough-notation@1.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      rough-notation: 0.5.1
 
   react@18.3.1:
     dependencies:
@@ -5423,11 +5485,19 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.21.0
       fsevents: 2.3.3
 
+  rough-notation@0.5.1: {}
+
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
 
+  s.color@0.0.15: {}
+
   safe-buffer@5.2.1: {}
+
+  sass-formatter@0.7.9:
+    dependencies:
+      suf-log: 2.5.3
 
   sax@1.4.1: {}
 
@@ -5577,11 +5647,19 @@ snapshots:
       pirates: 4.0.6
       ts-interface-checker: 0.1.13
 
+  suf-log@2.5.3:
+    dependencies:
+      s.color: 0.0.15
+
   supports-color@5.5.0:
     dependencies:
       has-flag: 3.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.10):
+    dependencies:
+      tailwindcss: 3.4.10
 
   tailwindcss@3.4.10:
     dependencies:
@@ -5779,11 +5857,12 @@ snapshots:
     optionalDependencies:
       '@volar/language-service': 2.4.0
 
-  volar-service-prettier@0.0.61(@volar/language-service@2.4.0):
+  volar-service-prettier@0.0.61(@volar/language-service@2.4.0)(prettier@3.3.3):
     dependencies:
       vscode-uri: 3.0.8
     optionalDependencies:
       '@volar/language-service': 2.4.0
+      prettier: 3.3.3
 
   volar-service-typescript-twoslash-queries@0.0.61(@volar/language-service@2.4.0):
     dependencies:
