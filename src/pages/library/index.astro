@@ -1,0 +1,262 @@
+---
+import BookCover from "../../components/BookCover.astro";
+import Page from "../../layouts/Page.astro";
+import { bookDate, bookLabel, getBooks, hasPage, shortMonth } from "../../lib/content";
+
+const books = await getBooks();
+const shelf = books.filter((b) => b.data.status !== "reading");
+const nightstand = books.filter((b) => b.data.status === "reading");
+
+const thisYear = new Date().getUTCFullYear();
+const readThisYear = books.filter(
+  (b) => b.data.status === "read" && b.data.finished?.getUTCFullYear() === thisYear,
+).length;
+
+const years = [
+  ...new Set(
+    shelf.filter((b) => b.data.status === "read" && b.data.finished).map((b) => b.data.finished!.getUTCFullYear()),
+  ),
+].sort((a, b) => b - a);
+
+const count = (fn: (b: (typeof books)[number]) => boolean) => shelf.filter(fn).length;
+const filters = [
+  { key: "all", label: "All books", n: shelf.length },
+  { key: "review", label: "Reviewed", n: count((b) => b.data.kind === "review") },
+  { key: "excerpt", label: "Excerpts", n: count((b) => b.data.kind === "excerpt") },
+  { key: "want", label: "Want to read", n: count((b) => b.data.status === "want") },
+].filter((f) => f.key === "all" || f.n > 0);
+---
+
+<Page title="Library" description="Books Anish Badri has read, with reviews and excerpts." active="library">
+  <div slot="rail" class="filters" role="group" aria-label="Filter books">
+    {
+      filters.map((f, i) => (
+        <button type="button" data-filter={f.key} aria-pressed={i === 0 ? "true" : "false"}>
+          {f.label} · {f.n}
+        </button>
+      ))
+    }
+    {
+      years.length > 0 && (
+        <div class="years">
+          {years.map((y) => (
+            <button type="button" data-filter={`y${y}`} aria-pressed="false">
+              {y}
+            </button>
+          ))}
+        </div>
+      )
+    }
+  </div>
+
+  <header class="head">
+    <h1 class="display">Library</h1>
+    <p class="lede muted">Books I have read, with a short excerpt or what I thought. Newest first. Tap a cover to open my notes.</p>
+  </header>
+
+  {shelf.length === 0 && <p class="muted">The shelf is empty for now.</p>}
+
+  <ul class="shelf">
+    {
+      shelf.map((book) => {
+        const { title, author, status, kind, finished } = book.data;
+        const year = status === "read" && finished ? `y${finished.getUTCFullYear()}` : "";
+        const tags = [kind ?? "", status === "want" ? "want" : "", year].join(" ");
+        const linked = hasPage(book);
+        const Tag = linked ? "a" : "div";
+        return (
+          <li data-tags={tags}>
+            <Tag class="book" href={linked ? `/library/${book.id}` : undefined}>
+              <BookCover book={book} />
+              <span class="meta">
+                <span class="title">{title}</span>
+                <span class="muted">{author}</span>
+                <span class:list={["status", { pen: Boolean(kind) && status !== "want", muted: !kind || status === "want" }]}>
+                  {bookLabel(book)}
+                  {status === "read" && finished && ` · ${shortMonth(bookDate(book))}`}
+                </span>
+              </span>
+            </Tag>
+          </li>
+        );
+      })
+    }
+  </ul>
+
+  <div slot="margin" class="aside">
+    {
+      nightstand.length > 0 && (
+        <section class="block">
+          <span class="label">On the nightstand</span>
+          {nightstand.map((book) => {
+            const { title, author, pages, currentPage } = book.data;
+            const pct = pages && currentPage ? Math.min(100, (currentPage / pages) * 100) : 0;
+            return (
+              <a class="reading" href={hasPage(book) ? `/library/${book.id}` : undefined}>
+                <BookCover book={book} size="sm" />
+                <span class="meta">
+                  <span class="title">{title}</span>
+                  <span class="muted">{author}</span>
+                  {currentPage && (
+                    <span class="progress">
+                      <span class="track">
+                        <span class="fill" style={{ width: `${pct}%` }} />
+                      </span>
+                      <span class="muted">p. {currentPage}</span>
+                    </span>
+                  )}
+                </span>
+              </a>
+            );
+          })}
+        </section>
+      )
+    }
+    <section class="block">
+      <span class="label">{thisYear} so far</span>
+      <span class="tally">{readThisYear} {readThisYear === 1 ? "book" : "books"}</span>
+    </section>
+  </div>
+</Page>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>("[data-filter]");
+  const items = document.querySelectorAll<HTMLElement>(".shelf li");
+
+  for (const button of buttons) {
+    button.addEventListener("click", () => {
+      const key = button.dataset.filter!;
+      for (const b of buttons) b.setAttribute("aria-pressed", String(b === button));
+      for (const item of items) {
+        const tags = item.dataset.tags!.split(" ");
+        item.hidden = key !== "all" && !tags.includes(key);
+      }
+    });
+  }
+</script>
+
+<style>
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 56px;
+  }
+  .lede {
+    max-width: 520px;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    line-height: 29px;
+  }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-left: 16px;
+  }
+  .filters button {
+    all: unset;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--color-graphite);
+  }
+  .filters button:hover,
+  .filters button[aria-pressed="true"] {
+    color: var(--color-ink);
+  }
+  .filters button[aria-pressed="true"] {
+    font-weight: 500;
+  }
+  .filters button:focus-visible {
+    outline: 2px solid var(--color-pen);
+    outline-offset: 2px;
+  }
+  .years {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 12px;
+  }
+
+  .shelf {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 136px);
+    gap: 56px 32px;
+  }
+  .book {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  a.book :global(.cover) {
+    transition: transform 0.2s ease;
+  }
+  a.book:hover :global(.cover) {
+    transform: translateY(-3px);
+  }
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 13px;
+    line-height: 18px;
+  }
+  .title {
+    font-weight: 500;
+  }
+  a.book:hover .title {
+    color: var(--color-pen);
+  }
+  .status {
+    padding-top: 4px;
+  }
+
+  .aside {
+    padding-top: 194px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+  .block {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .reading {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 6px;
+    font-size: 12px;
+  }
+  .track {
+    width: 80px;
+    height: 2px;
+    background: var(--color-rule);
+  }
+  .fill {
+    display: block;
+    height: 100%;
+    background: var(--color-pen);
+  }
+  .tally {
+    font-family: var(--font-serif);
+    font-size: 40px;
+    line-height: 44px;
+  }
+  @media (max-width: 1179px) {
+    .aside {
+      padding-top: 0;
+    }
+  }
+</style>

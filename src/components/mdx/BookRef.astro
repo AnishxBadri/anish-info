@@ -1,0 +1,49 @@
+---
+// Margin card linking to a book in the library:  <BookRef id="working-in-public" />
+import { getEntry } from "astro:content";
+import { hasPage } from "../../lib/content";
+import BookCover from "../BookCover.astro";
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+const book = await getEntry("books", id);
+if (!book) throw new Error(`<BookRef id="${id}"> doesn't match any file in src/content/books/`);
+const linked = hasPage(book);
+---
+
+<aside class="in-margin book-ref">
+  <a href={linked ? `/library/${book.id}` : undefined} class="card">
+    <BookCover book={book} size="sm" />
+    <span class="meta">
+      <span>From the library</span>
+      <span class="title">{book.data.title}</span>
+      <span>{book.data.author}</span>
+      {linked && <span class="pen">My notes →</span>}
+    </span>
+  </a>
+</aside>
+
+<style>
+  .card {
+    text-decoration: none;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 18px;
+  }
+  .title {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .card:hover .title {
+    color: var(--color-pen);
+  }
+</style>

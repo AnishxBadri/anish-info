@@ -1,0 +1,17 @@
+---
+// A big sans-serif line that pulls one idea out of the text.
+---
+
+<p class="pull"><slot /></p>
+
+<style>
+  .pull {
+    clear: both;
+    font-family: var(--font-sans);
+    font-size: clamp(24px, 2.4vw, 30px);
+    line-height: 1.27;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    padding: 24px 0;
+  }
+</style>

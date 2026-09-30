@@ -1,0 +1,70 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  caption?: string;
+  // "main" (default) fits the text column, "wide" spans text + margin,
+  // "margin" sits in the margin next to the text.
+  size?: "main" | "wide" | "margin";
+  // Paper-toned backdrop, useful for scanned drawings with transparent edges.
+  wash?: boolean;
+}
+
+const { src, alt, caption, size = "main", wash = false } = Astro.props;
+const width = { main: 640, wide: 936, margin: 240 }[size];
+---
+
+<figure class:list={["figure", size, { bleed: size === "wide", "in-margin": size === "margin" }]}>
+  <div class:list={["frame", { wash }]}>
+    {
+      typeof src === "string" ? (
+        <img src={src} alt={alt} width={width} loading="lazy" decoding="async" />
+      ) : (
+        <Image src={src} alt={alt} width={width * 2} />
+      )
+    }
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .figure {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  .figure.margin {
+    margin-top: 4px;
+    margin-bottom: 20px;
+  }
+  .frame {
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .frame.wash {
+    background: var(--color-wash);
+    padding: 32px;
+    display: flex;
+    justify-content: center;
+  }
+  .margin .frame.wash {
+    padding: 12px;
+  }
+  .frame :global(img) {
+    width: 100%;
+    height: auto;
+  }
+  figcaption {
+    margin-top: 12px;
+    max-width: var(--main-w);
+    font-family: var(--font-sans);
+    font-size: var(--text-note);
+    line-height: 20px;
+    color: var(--color-graphite);
+  }
+  .margin figcaption {
+    margin-top: 8px;
+  }
+</style>

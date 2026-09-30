@@ -1,0 +1,67 @@
+---
+import { NAV, type NavKey } from "../consts";
+
+interface Props {
+  active?: NavKey;
+}
+
+const { active } = Astro.props;
+---
+
+<nav aria-label="Site">
+  <ul>
+    {
+      NAV.map((item) => (
+        <li>
+          <a href={item.href} aria-current={item.key === active ? "page" : undefined}>
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-size: var(--text-ui);
+    line-height: 20px;
+  }
+  a {
+    position: relative;
+    display: inline-block;
+    padding-left: 16px;
+  }
+  a[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  @media (max-width: 1179px) {
+    ul {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px 24px;
+    }
+    a {
+      padding-left: 0;
+    }
+    a[aria-current="page"]::before {
+      left: 50%;
+      top: auto;
+      bottom: -8px;
+      transform: translateX(-50%);
+    }
+  }
+</style>

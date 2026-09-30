@@ -1,0 +1,20 @@
+---
+// Unnumbered note, drawing, or aside in the right-hand margin.
+// Put it on its own line, just before the paragraph it sits next to.
+---
+
+<aside class="in-margin margin-note"><slot /></aside>
+
+<style>
+  .margin-note :global(img),
+  .margin-note :global(svg) {
+    margin-bottom: 10px;
+  }
+  .margin-note :global(p + p) {
+    margin-top: 8px;
+  }
+  .margin-note :global(strong) {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+</style>

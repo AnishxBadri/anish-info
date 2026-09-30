@@ -1,99 +1,300 @@
 /*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
+  Design tokens from the Paper file "anish.info".
+  Mood: sketchbook margins. Pencil ink on a paper page, fountain-pen blue for links.
+*/
+:root {
+  color-scheme: light;
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+  --color-page: #f7f6f2;
+  --color-ink: #161614;
+  --color-graphite: #6b6a64;
+  --color-rule: #dcdad3;
+  --color-pen: #2a45a8;
+  --color-wash: #efede6;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+  --text-note: 13px;
+  --text-ui: 15px;
+  --text-body: 19px;
+  --leading-body: 31px;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 347 77% 50%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 240 4% 46%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 20px;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
+  /* Three columns: rail · main · margin */
+  --rail-w: 200px;
+  --main-w: 640px;
+  --margin-w: 240px;
+  --gap-rail: 80px;
+  --gap-margin: 56px;
+  --page-pad: clamp(20px, 6vw, 120px);
 }
 
-.sr-only {
-  border: 0;
-  padding: 0;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
   margin: 0;
-  position: absolute !important;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-  /* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
-  clip: rect(1px 1px 1px 1px);
-  /* maybe deprecated but we need to support legacy browsers */
-  clip: rect(1px, 1px, 1px, 1px);
-  /* modern browsers, clip-path works inwards from each corner */
-  clip-path: inset(50%);
-  /* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
-  white-space: nowrap;
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui);
+  line-height: 1.4;
 }
 
-@font-face {
-  font-family: "Newsreader";
-  src: url("/fonts/Newsreader-VariableFont_opsz,wght.ttf") format("truetype");
-  font-weight: normal;
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+ul,
+ol {
+  margin: 0;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-pen);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-pen);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: #d8def3;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -40px;
+  padding: 6px 10px;
+  background: var(--color-ink);
+  color: var(--color-page);
+}
+.skip-link:focus {
+  top: 12px;
+  color: var(--color-page);
+}
+
+/* ---------- Page grid ---------- */
+
+.page {
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, var(--main-w)) var(--margin-w);
+  column-gap: var(--gap-rail);
+  align-items: start;
+  padding: 96px var(--page-pad) 120px;
+}
+.page > .main {
+  grid-column: 2;
+}
+/* Margin gap differs from rail gap, so the third column is pushed with padding. */
+.page > .margin {
+  grid-column: 3;
+  margin-left: calc(var(--gap-margin) - var(--gap-rail));
+}
+
+.rail {
+  position: sticky;
+  top: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 96px;
+}
+
+/* ---------- Typography helpers ---------- */
+
+.display {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(44px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.eyebrow {
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--color-pen);
+}
+
+.label {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-graphite);
+}
+
+.muted {
+  color: var(--color-graphite);
+}
+
+.pen {
+  color: var(--color-pen);
+}
+
+/* ---------- Long-form prose (essays, book notes) ---------- */
+
+.prose {
+  font-family: var(--font-serif);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  counter-reset: sidenote;
+}
+.prose > * + * {
+  margin-top: 20px;
+}
+.prose h2 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 38px;
+  letter-spacing: -0.01em;
+  margin-top: 64px;
+  scroll-margin-top: 48px;
+}
+.prose h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 30px;
+  margin-top: 40px;
+}
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.prose a:hover {
+  text-decoration-color: currentColor;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.2em;
+}
+.prose li + li {
+  margin-top: 6px;
+}
+.prose blockquote {
+  padding-left: 20px;
+  border-left: 2px solid var(--color-pen);
+  font-style: italic;
+}
+.prose code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.85em;
+  background: var(--color-wash);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.prose pre {
+  font-size: 14px;
+  line-height: 22px;
+  padding: 16px 20px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+.prose pre code {
+  background: none;
+  padding: 0;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--color-rule);
+  margin: 48px 0;
+}
+
+/*
+  Anything with .in-margin floats out of the main column into the right-hand
+  margin, level with where it appears in the text (Tufte-style sidenotes).
+*/
+.in-margin {
+  float: right;
+  clear: right;
+  width: var(--margin-w);
+  margin-right: calc(-1 * (var(--margin-w) + var(--gap-margin)));
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-family: var(--font-sans);
+  font-size: var(--text-note);
+  line-height: 20px;
   font-style: normal;
-  font-display: swap;
+  color: var(--color-graphite);
+}
+.prose > .in-margin {
+  margin-top: 4px;
+}
+
+/* Elements that span main + margin columns. */
+.bleed {
+  margin-right: calc(-1 * (var(--margin-w) + var(--gap-margin)));
+  clear: both;
+}
+
+/* ---------- Narrow screens: one column, margin content goes inline ---------- */
+
+@media (max-width: 1179px) {
+  .page {
+    grid-template-columns: minmax(0, var(--main-w));
+    justify-content: start;
+    padding-top: 32px;
+    row-gap: 48px;
+  }
+  .page > .main,
+  .page > .margin {
+    grid-column: 1;
+    margin-left: 0;
+  }
+  .rail {
+    position: static;
+    gap: 0;
+  }
+  .rail-extra {
+    display: none;
+  }
+  .in-margin {
+    float: none;
+    display: block;
+    width: auto;
+    margin: 16px 0 20px;
+    padding-left: 14px;
+    border-left: 1px solid var(--color-rule);
+  }
+  .bleed {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --text-body: 18px;
+    --leading-body: 29px;
+  }
 }

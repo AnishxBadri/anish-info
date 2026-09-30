@@ -1,0 +1,191 @@
+---
+// The Index: everything on (→) and off (↗) this site, in one place.
+import FormattedDate from "../../components/FormattedDate.astro";
+import { NEWSLETTER_NAME, PROJECTS, SUBSTACK_URL } from "../../consts";
+import Page from "../../layouts/Page.astro";
+import { KIND_LABEL, getBooks, getEssays } from "../../lib/content";
+import { getNewsletterPosts } from "../../lib/substack";
+
+const essays = await getEssays();
+const books = await getBooks();
+const reviewed = books.filter((b) => b.data.status === "read" && b.data.kind).slice(0, 4);
+const posts = await getNewsletterPosts(SUBSTACK_URL);
+
+const isInternal = (href: string) => href.startsWith("/");
+---
+
+<Page title="Index" description="Everything Anish Badri has written, read, and built." active="index">
+  <h1 class="display">Index</h1>
+
+  <section class="section">
+    <h2>Essays</h2>
+    <div class="items">
+      <p class="muted">Long pieces with drawings and margin notes. They live here first.</p>
+      {
+        essays.length === 0 ? (
+          <p class="muted">The first one is on its way.</p>
+        ) : (
+          <ul class="rows">
+            {essays.map((e) => (
+              <li>
+                <span class="meta muted">
+                  <FormattedDate date={e.data.pubDate} month="short" day={false} />
+                </span>
+                <a href={`/writing/${e.id}`}>{e.data.title} →</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+    <aside class="note">
+      <span>→ stays on this site</span>
+      <span>↗ goes somewhere else</span>
+    </aside>
+  </section>
+
+  {
+    SUBSTACK_URL && (
+      <section class="section">
+        <h2>Newsletter</h2>
+        <div class="items">
+          <a href={SUBSTACK_URL}>{NEWSLETTER_NAME} ↗</a>
+          <p class="muted">Short notes on Substack. Every essay above gets sent there too.</p>
+          {posts.length > 0 && (
+            <ul class="rows">
+              {posts.map((p) => (
+                <li>
+                  <span class="meta muted">{p.date && <FormattedDate date={p.date} month="short" day={false} />}</span>
+                  <a href={p.link}>{p.title} ↗</a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <h2>Library</h2>
+    <div class="items">
+      <p class="muted">What I read and what I thought.</p>
+      {
+        reviewed.length > 0 && (
+          <ul class="rows">
+            {reviewed.map((b) => (
+              <li>
+                <span class="meta muted">{KIND_LABEL[b.data.kind!]}</span>
+                <a href={`/library/${b.id}`}>
+                  {b.data.title}, {b.data.author} →
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <a class="pen" href="/library">The whole shelf →</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Building</h2>
+    <div class="items stacked">
+      {
+        PROJECTS.map((p) => (
+          <div class="project">
+            {p.href ? (
+              <a href={p.href}>
+                {p.title} {isInternal(p.href) ? "→" : "↗"}
+              </a>
+            ) : (
+              <span>{p.title}</span>
+            )}
+            <span class="muted">{p.blurb}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</Page>
+
+<style>
+  .display {
+    margin-bottom: 72px;
+  }
+  .section {
+    position: relative;
+    display: flex;
+    gap: 24px;
+    font-size: var(--text-ui);
+    line-height: 22px;
+  }
+  .section + .section {
+    margin-top: 72px;
+  }
+  h2 {
+    width: 120px;
+    flex-shrink: 0;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 24px;
+  }
+  .items {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .items > p {
+    padding-bottom: 8px;
+  }
+  .items.stacked {
+    gap: 20px;
+  }
+  .rows {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .rows li {
+    display: flex;
+    gap: 12px;
+  }
+  .meta {
+    width: 72px;
+    flex-shrink: 0;
+  }
+  .project {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .note {
+    position: absolute;
+    left: calc(100% + var(--gap-margin));
+    top: 0;
+    width: var(--margin-w);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: var(--text-note);
+    line-height: 20px;
+    color: var(--color-graphite);
+  }
+
+  @media (max-width: 1179px) {
+    .note {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .section {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+</style>

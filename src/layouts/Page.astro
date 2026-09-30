@@ -1,0 +1,35 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Nav from "../components/Nav.astro";
+import { SITE_DESCRIPTION, SITE_TITLE, type NavKey } from "../consts";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  active?: NavKey;
+}
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, active } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} image={image} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot name="top" />
+    <div class="page">
+      <aside class="rail">
+        <Nav active={active} />
+        {Astro.slots.has("rail") && <div class="rail-extra"><slot name="rail" /></div>}
+      </aside>
+      <main id="main" class="main">
+        <slot />
+      </main>
+      {Astro.slots.has("margin") && <aside class="margin"><slot name="margin" /></aside>}
+    </div>
+  </body>
+</html>
