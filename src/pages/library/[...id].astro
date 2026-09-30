@@ -1,0 +1,235 @@
+---
+import { render } from "astro:content";
+import BookCover from "../../components/BookCover.astro";
+import { mdxComponents } from "../../components/mdx";
+import Page from "../../layouts/Page.astro";
+import {
+  type Book,
+  KIND_LABEL,
+  essaysMentioning,
+  getBooks,
+  hasPage,
+  shortMonth,
+} from "../../lib/content";
+
+export async function getStaticPaths() {
+  const books = (await getBooks()).filter(hasPage);
+  return books.map((book, i) => ({
+    params: { id: book.id },
+    props: { book, next: books[i + 1] },
+  }));
+}
+
+interface Props {
+  book: Book;
+  next?: Book;
+}
+
+const { book, next } = Astro.props;
+const { title, author, status, kind, started, finished, oneLine, pages, currentPage, format, reread, marks, draft } =
+  book.data;
+const { Content } = await render(book);
+const mentions = await essaysMentioning(book.id);
+
+const eyebrow = status === "reading" ? "Reading now" : kind ? KIND_LABEL[kind] : "Notes";
+const bodyHeading = kind === "excerpt" ? "An excerpt" : "What I thought";
+
+const readRange =
+  started && finished
+    ? shortMonth(started) === shortMonth(finished)
+      ? shortMonth(finished)
+      : `${shortMonth(started)} – ${shortMonth(finished)}`
+    : finished
+      ? shortMonth(finished)
+      : started
+        ? `Since ${shortMonth(started)}`
+        : undefined;
+
+const details = [
+  { label: "Read", value: readRange },
+  { label: "Pages", value: pages && (currentPage && status === "reading" ? `${currentPage} of ${pages}` : `${pages}`) },
+  { label: "Format", value: format },
+  { label: "Would reread", value: reread, accent: true },
+].filter((d) => d.value);
+---
+
+<Page title={title} description={oneLine ?? `${title} by ${author}: Anish's notes.`} active="library">
+  <div slot="rail" class="back">
+    <a href="/library">← All books</a>
+    {next && <a class="muted" href={`/library/${next.id}`}>Next: {next.data.title}</a>}
+  </div>
+
+  <article>
+    <header class="head">
+      <BookCover book={book} size="lg" eager />
+      <div class="title">
+        <p class="eyebrow">{draft ? "Draft · " : ""}{eyebrow}</p>
+        <h1 class="display">{title}</h1>
+        <p class="author">{author}</p>
+      </div>
+    </header>
+
+    {
+      details.length > 0 && (
+        <dl class="in-margin details">
+          {details.map((d) => (
+            <div>
+              <dt>{d.label}</dt>
+              <dd class:list={{ pen: d.accent }}>{d.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+
+    {
+      oneLine && (
+        <div class="one-line">
+          <span class="label">In one line</span>
+          <p>{oneLine}</p>
+        </div>
+      )
+    }
+
+    {
+      (marks.length > 0 || mentions.length > 0) && (
+        <aside class="in-margin marks">
+          {marks.length > 0 && <span class="label">Pencil marks</span>}
+          {marks.map((m) => (
+            <p>
+              {m.page && <span class="pen">p. {m.page}</span>}
+              {m.page && " — "}
+              {m.note}
+            </p>
+          ))}
+          {mentions.length > 0 && (
+            <div class="mentions">
+              <span>Mentioned in</span>
+              {mentions.map((e) => (
+                <a class="pen" href={`/writing/${e.id}`}>
+                  {e.data.title} →
+                </a>
+              ))}
+            </div>
+          )}
+        </aside>
+      )
+    }
+
+    {
+      book.body?.trim() && (
+        <div class="prose body">
+          <h2 class="body-heading">{bodyHeading}</h2>
+          <Content components={mdxComponents} />
+        </div>
+      )
+    }
+  </article>
+</Page>
+
+<style>
+  .back {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 16px;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .head {
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+    padding-bottom: 56px;
+  }
+  .title {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 4px;
+  }
+  .title .display {
+    font-size: clamp(40px, 4.4vw, 52px);
+    line-height: 1.04;
+  }
+  .author {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 28px;
+    color: var(--color-graphite);
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .details div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .details div:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .details dd {
+    margin: 0;
+    color: var(--color-ink);
+    text-align: right;
+  }
+  .details dd.pen {
+    color: var(--color-pen);
+    font-weight: 500;
+  }
+
+  .one-line {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-left: 20px;
+    border-left: 2px solid var(--color-pen);
+    margin-bottom: 72px;
+  }
+  .one-line p {
+    font-size: clamp(22px, 2.2vw, 26px);
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .marks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 58px;
+  }
+  .mentions {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 12px;
+  }
+
+  .body-heading {
+    margin-top: 0;
+    font-size: 28px;
+    line-height: 34px;
+  }
+
+  @media (max-width: 640px) {
+    .head {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 28px;
+    }
+    .marks {
+      margin-top: 16px;
+    }
+  }
+</style>

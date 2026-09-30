@@ -1,50 +1,150 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import { EMAIL, SOCIALS } from "../consts";
+import Page from "../layouts/Page.astro";
+import { getBooks, getEssays, hasPage } from "../lib/content";
+
+const [latest] = await getEssays();
+const reading = (await getBooks()).filter((b) => b.data.status === "reading");
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-  </head>
-  <body class="mt-20 bg-slate-200 font-sans text-gray-800">
-    <div class="max-w-6xl mx-auto py-12 px-4">
-      <div class="flex">
-        <Header />
-        <main class="ml-8 w-1/2 flex-grow">
-          <h1 class="text-2xl font-light mb-8">Anish Badri</h1>
+<Page active="home">
+  <div class="intro">
+    <h1 class="name">Anish Badri</h1>
 
-          <div class="max-w-2xl mb-8">
-            <p class="text-lg">
-              I'm currently building my startup: Parrot Prep, a tool that will hopefully
-              serve as an infrastructure for your job search process.
-            </p>
-          </div>
+    <p class="lede">
+      I'm building Parrot Prep, a tool that I hope becomes the infrastructure for your job search.
+    </p>
 
-          <div class="max-w-2xl mb-8">
-            <p class="mb-4">Here are some other things about me:</p>
-            <ul class="list-disc list-inside space-y-2">
-              <li>Graduated UCLA with a BS degree in Computer Science</li>
-              <li>Working on an open source Rust based TUI tool</li>
-              <li>Interned at Brilliant Smart Home</li>
-              <li>Did some machine learning research at Ozcan Research Lab</li>
-              <li>Currently grokking through Rust and Zig, while also dabbling into Go</li>
-            </ul>
-          </div>
-
-          <div class="mb-8">
-            <p>Want to chat? Drop me a note anishbadri2621@gmail.com</p>
-          </div>
-
-          <Footer />
-        </main>
-        <div class="w-1/5">
-          {/* Empty right column */}
-        </div>
-      </div>
+    <div class="about">
+      <p>I also write, draw, and review the books I read. Some other things about me:</p>
+      <ul>
+        <li>Graduated from UCLA with a BS in Computer Science</li>
+        <li>Did machine learning research at the Ozcan Research Lab</li>
+        <li>Interned at Brilliant Smart Home</li>
+        <li>Working on an open source Rust TUI tool</li>
+        <li>Currently grokking Rust and Zig, while dabbling in Go</li>
+      </ul>
+      <p class="chat">Want to chat? Drop me a note at <a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
     </div>
-  </body>
-</html>
+
+    <ul class="socials">
+      {
+        SOCIALS.map((s) => (
+          <li>
+            <a href={s.href} rel="me">
+              {s.label} ↗
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div slot="margin" class="aside">
+    {
+      latest && (
+        <section>
+          <span class="label">Latest essay</span>
+          <a class="strong" href={`/writing/${latest.id}`}>
+            {latest.data.title} →
+          </a>
+        </section>
+      )
+    }
+    {
+      reading.length > 0 && (
+        <section>
+          <span class="label">Reading</span>
+          {reading.map((book) => (
+            <>
+              <a class="strong" href={hasPage(book) ? `/library/${book.id}` : "/library"}>
+                {book.data.title} →
+              </a>
+              {book.data.currentPage && book.data.pages && (
+                <span class="muted">
+                  p. {book.data.currentPage} of {book.data.pages}
+                </span>
+              )}
+            </>
+          ))}
+        </section>
+      )
+    }
+  </div>
+</Page>
+
+<style>
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+  .name {
+    font-size: var(--text-ui);
+    line-height: 20px;
+    font-weight: 400;
+  }
+  .lede {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 2.8vw, 34px);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    line-height: 30px;
+  }
+  .about ul {
+    padding-left: 1.1em;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .about li::marker {
+    color: var(--color-graphite);
+  }
+  .chat {
+    padding-top: 24px;
+  }
+  .chat a {
+    text-decoration: underline;
+    text-decoration-color: var(--color-rule);
+    text-underline-offset: 4px;
+  }
+  .socials {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-size: 14px;
+    color: var(--color-graphite);
+    margin-top: -32px;
+  }
+
+  .aside {
+    padding-top: 76px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .aside section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: var(--text-note);
+    line-height: 20px;
+  }
+  .strong {
+    font-weight: 500;
+  }
+  @media (max-width: 1179px) {
+    .aside {
+      padding-top: 0;
+    }
+  }
+</style>

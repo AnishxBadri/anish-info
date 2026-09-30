@@ -1,0 +1,135 @@
+---
+import { render } from "astro:content";
+import FormattedDate from "../../components/FormattedDate.astro";
+import ReadingProgress from "../../components/ReadingProgress.astro";
+import Toc from "../../components/Toc.astro";
+import { mdxComponents } from "../../components/mdx";
+import { EMAIL, SUBSTACK_URL } from "../../consts";
+import Page from "../../layouts/Page.astro";
+import { type Essay, getEssays, readingMinutes } from "../../lib/content";
+
+export async function getStaticPaths() {
+  const essays = await getEssays();
+  return essays.map((essay, i) => ({
+    params: { id: essay.id },
+    props: { essay, newer: essays[i - 1], older: essays[i + 1] },
+  }));
+}
+
+interface Props {
+  essay: Essay;
+  newer?: Essay;
+  older?: Essay;
+}
+
+const { essay, newer, older } = Astro.props;
+const { title, description, pubDate, updatedDate, topic, substackUrl, draft } = essay.data;
+const { Content, headings } = await render(essay);
+---
+
+<Page title={title} description={description} active="writing">
+  <ReadingProgress slot="top" />
+  <Toc slot="rail" headings={headings} />
+
+  <article>
+    <header class="head">
+      <p class="eyebrow">{draft ? "Draft · " : ""}Essay{topic && ` · ${topic}`}</p>
+      <h1 class="display">{title}</h1>
+      <p class="meta muted">
+        <FormattedDate date={pubDate} /> · {readingMinutes(essay.body)} min read
+        {updatedDate && <> · updated <FormattedDate date={updatedDate} /></>}
+        {substackUrl && <> · <a href={substackUrl}>also on Substack ↗</a></>}
+      </p>
+    </header>
+
+    <div class="prose">
+      <Content components={mdxComponents} />
+    </div>
+
+    <footer class="end">
+      <aside class="in-margin subscribe">
+        <strong>Get new essays by email</strong>
+        <span>Every essay is also sent through Substack. Same words, simpler layout.</span>
+        {SUBSTACK_URL && <a class="pen" href={SUBSTACK_URL}>Subscribe on Substack ↗</a>}
+      </aside>
+      <p class="note">Thoughts or ideas? Drop me a note at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+      <nav class="pager" aria-label="More essays">
+        {
+          older && (
+            <a href={`/writing/${older.id}`}>
+              <span class="muted">Previous</span>
+              <span>← {older.data.title}</span>
+            </a>
+          )
+        }
+        {
+          newer && (
+            <a href={`/writing/${newer.id}`}>
+              <span class="muted">Next</span>
+              <span>{newer.data.title} →</span>
+            </a>
+          )
+        }
+      </nav>
+    </footer>
+  </article>
+</Page>
+
+<style>
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 72px;
+  }
+  .meta {
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .meta a:hover {
+    color: var(--color-pen);
+  }
+
+  .end {
+    margin-top: 96px;
+    padding-top: 32px;
+    border-top: 1px solid var(--color-rule);
+    clear: both;
+  }
+  .end > * + * {
+    margin-top: 28px;
+  }
+  .subscribe {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 0;
+  }
+  .subscribe strong {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .note {
+    margin-top: 0;
+    font-family: var(--font-serif);
+    font-size: 22px;
+    line-height: 30px;
+  }
+  .note a {
+    text-decoration: underline;
+    text-decoration-color: var(--color-rule);
+    text-underline-offset: 4px;
+  }
+  .pager {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 48px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .pager a {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+</style>

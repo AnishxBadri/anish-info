@@ -1,0 +1,21 @@
+---
+import Page from "../layouts/Page.astro";
+---
+
+<Page title="Not found" description="This page doesn't exist.">
+  <div class="lost">
+    <h1 class="display">Lost the page</h1>
+    <p class="muted">Whatever was here has moved or never existed. Try the <a class="pen" href="/index">Index</a>.</p>
+  </div>
+</Page>
+
+<style>
+  .lost {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+  }
+</style>

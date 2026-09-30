@@ -1,0 +1,29 @@
+---
+// Numbered note. Write it inline, right after the word it belongs to:
+//   ...learning Rust<Sidenote>Mostly through the Rust Book.</Sidenote> I wanted...
+---
+
+<span class="sn"><sup class="sn-ref" aria-hidden="true"></sup><span class="in-margin sidenote" role="note"><sup class="sn-num" aria-hidden="true"></sup><slot /></span></span>
+
+<style>
+  .sn-ref {
+    counter-increment: sidenote;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    line-height: 0;
+    color: var(--color-pen);
+    padding-left: 1px;
+  }
+  .sn-ref::after {
+    content: counter(sidenote);
+  }
+  .sn-num {
+    font-size: 10px;
+    line-height: 0;
+    color: var(--color-pen);
+    padding-right: 4px;
+  }
+  .sn-num::after {
+    content: counter(sidenote);
+  }
+</style>

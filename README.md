@@ -1,68 +1,106 @@
-# Astro Starter Kit: Blog
+# anish.info
+
+Personal site: essays, a book library, and an index of everything. Built with Astro 7, no client framework. The layout follows the three-column design in the Paper file "anish.info": left rail for navigation, a 640px reading column, and a right margin for notes and drawings.
 
 ```sh
-npm create astro@latest -- --template blog
+npm install
+npm run dev      # http://localhost:4321, drafts visible
+npm run build    # type-checks, then builds to dist/ (drafts excluded)
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/blog)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/blog)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/blog/devcontainer.json)
+## Pages
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+| Route             | Source                              |
+| ----------------- | ----------------------------------- |
+| `/`               | `src/pages/index.astro`             |
+| `/index`          | `src/pages/index/index.astro`       |
+| `/writing`        | `src/pages/writing/index.astro`     |
+| `/writing/<slug>` | `src/content/essays/<slug>.mdx`     |
+| `/library`        | `src/pages/library/index.astro`     |
+| `/library/<slug>` | `src/content/books/<slug>.md`       |
+| `/rss.xml`        | essays feed                         |
 
-![blog](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
+Bio, email, socials, projects and the Substack URL live in `src/consts.ts`.
 
-Features:
+## Writing an essay
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+Add `src/content/essays/my-essay.mdx`:
 
-## 🚀 Project Structure
+```mdx
+---
+title: My essay
+description: One sentence for the list page and link previews.
+pubDate: 2026-10-01
+topic: Tools               # optional label above the title
+substackUrl: https://...   # optional, links to the newsletter copy
+draft: true                # visible in dev only; remove to publish
+---
 
-Inside of your Astro project, you'll see the following folders and files:
+Text with a numbered side note.<Sidenote>Shows in the margin, level with this line.</Sidenote>
 
-```text
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+<MarginNote>
+  <img src="/sketches/my-drawing.svg" alt="What the drawing shows" />
+  A caption or aside, placed next to the paragraph below it.
+</MarginNote>
+
+The paragraph the margin note sits beside.
+
+<PullQuote>One line worth pulling out.</PullQuote>
+
+<Figure src="/sketches/diagram.svg" alt="..." caption="Fig. 2 ..." size="wide" wash />
+
+<BookRef id="working-in-public" />
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+These components need no import:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- `Sidenote`: numbered note. Write it inline, right after the word it belongs to.
+- `MarginNote`: unnumbered margin content (drawings, asides). Put it on its own line before the paragraph it belongs beside.
+- `Figure`: `size="main" | "wide" | "margin"`. Add `wash` for a paper-toned backdrop behind scanned drawings.
+- `PullQuote`: large sans-serif line.
+- `BookRef`: margin card linking to a book. The book's page then shows "Mentioned in" with a link back to the essay.
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+Put drawings in `public/sketches/`. On narrow screens, everything in the margin moves inline under its paragraph.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Adding a book
 
-## 🧞 Commands
+Add `src/content/books/<slug>.md`. The body is your review, excerpt, or notes.
 
-All commands are run from the root of the project, from a terminal:
+```md
+---
+title: The Dream Machine
+author: M. Mitchell Waldrop
+status: read            # read | reading | want
+kind: review            # review | excerpt | notes; leave out if there's no write-up
+started: 2026-08-02
+finished: 2026-09-14
+oneLine: One-sentence summary shown at the top.
+pages: 528
+currentPage: 120        # for status: reading; shows a progress bar
+format: Paperback
+reread: Yes
+cover: ./covers/dream-machine.jpg   # optional real cover
+coverColor: "#B8432F"   # without a cover image, a typographic cover is drawn
+coverInk: "#F7F1E4"
+coverStyle: serif       # serif | sans | italic
+marks:
+  - page: 112
+    note: A pencil mark, shown in the margin.
+---
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+What I thought...
+```
 
-## 👀 Want to learn more?
+A book gets its own page only if it has a `kind` or some body text. Otherwise it just shows on the shelf.
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Newsletter
 
-## Credit
+Set `SUBSTACK_URL` in `src/consts.ts`. The Index page then lists your latest Substack posts, fetched from the feed at build time, and essays show a subscribe link. If the feed can't be reached, the build still succeeds and the list is left empty.
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+## Sample content
+
+Everything in `src/content/` right now is a placeholder marked `draft: true`. It shows in `npm run dev` so you can see the layout, and is never built for production. Replace it or delete it.
+
+## Deploy
+
+`netlify.toml` builds with `npm run build` and publishes `dist/`. Set `site` in `astro.config.mjs` to the real domain.

@@ -1,0 +1,44 @@
+---
+title: Why I keep rewriting my terminal
+description: Four rewrites of one small tool, and what each one taught me about how I work.
+pubDate: 2026-09-30
+topic: Tools
+# Sample essay showing every layout component. Placeholder words: replace or delete.
+# Drafts show up in `npm run dev` and are left out of production builds.
+draft: true
+---
+
+<MarginNote>
+  <img src="/sketches/terminal.svg" alt="A pencil sketch of a terminal window with a blinking prompt" width="200" />
+  Fig. 1. The tool, as I drew it on day one. Mostly a blinking cursor and a lot of hope.
+</MarginNote>
+
+I have rewritten the same small terminal tool four times. Not because the first three were broken, but because every version showed me something about how I actually think while I work. The tool is a mirror I keep polishing. This essay is about what each rewrite taught me, and why I think building your own instruments is an underrated way to learn a craft.
+
+## Why a terminal
+
+The terminal is the most honest interface I use. There is no layout to hide behind. You type, it answers. When I started learning Rust<Sidenote>Mostly through the Rust Book, and a lot of fighting with the borrow checker at 1am.</Sidenote> I wanted a project small enough to finish and strange enough to keep me curious, so I built a tiny TUI that shows my notes, my reading list and my to-dos in one pane.<Sidenote>Built with ratatui. The first version was 212 lines and panicked on resize.</Sidenote> It was ugly, and it was mine.
+
+<PullQuote>Every rewrite was less about the code and more about noticing what I actually reached for.</PullQuote>
+
+## The first rewrite
+
+<Figure
+  src="/sketches/rewrites-timeline.svg"
+  alt="A hand-drawn timeline with four versions of the tool, the last one circled in blue"
+  caption="Fig. 2. Four rewrites on one timeline: v1 notes pane, v2 reading list, v3 async sync, v4 the one I actually use."
+  size="wide"
+  wash
+/>
+
+The first version did everything at once and so it did nothing well. The rewrite started by deleting features, which felt like losing work until I noticed I didn't miss any of them.
+
+## Borrowing, literally
+
+<BookRef id="working-in-public" />
+
+Around the third rewrite I was reading Nadia Eghbal's *Working in Public*, and one idea stuck: most software is maintained by very few people who care a great deal. That changed how I thought about my little tool. I was not building a product. I was maintaining a relationship with my own habits.
+
+## Coda
+
+Write the last section here. Everything in this file is placeholder text that shows how the layout works: margin notes, numbered sidenotes, a pull quote, a wide figure, and a book reference that links to the library.

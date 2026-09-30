@@ -1,0 +1,65 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const sections = Astro.props.headings.filter((h) => h.depth === 2);
+---
+
+{
+  sections.length > 0 && (
+    <nav class="toc" aria-label="On this page">
+      <ol>
+        {sections.map((h) => (
+          <li>
+            <a href={`#${h.slug}`} data-toc={h.slug}>
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
+<script>
+  // Highlight the section currently being read.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>("[data-toc]")].map((a) => [a.dataset.toc!, a]),
+  );
+  const headings = [...links.keys()]
+    .map((id) => document.getElementById(id))
+    .filter((el): el is HTMLElement => el !== null);
+
+  function update() {
+    let current = headings[0];
+    for (const h of headings) {
+      if (h.getBoundingClientRect().top < window.innerHeight * 0.3) current = h;
+    }
+    for (const [id, a] of links) a.toggleAttribute("aria-current", id === current?.id);
+  }
+
+  if (headings.length) {
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+  }
+</script>
+
+<style>
+  ol {
+    list-style: none;
+    padding: 0 0 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--color-graphite);
+  }
+  a[aria-current] {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+</style>

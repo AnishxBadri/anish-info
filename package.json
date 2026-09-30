@@ -1,35 +1,29 @@
 {
-  "name": "celestial-chroma",
+  "name": "anish-info",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.3",
-    "@astrojs/mdx": "^3.1.4",
-    "@astrojs/netlify": "^5.5.1",
-    "@astrojs/react": "^3.6.2",
-    "@astrojs/rss": "^4.0.7",
-    "@astrojs/sitemap": "^3.1.6",
-    "@astrojs/tailwind": "^5.1.0",
-    "@astrojs/vercel": "^7.8.0",
-    "@types/react": "^18.3.4",
-    "@types/react-dom": "^18.3.0",
-    "astro": "^4.14.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-rough-notation": "^1.0.5",
-    "rough-notation": "^0.5.1",
-    "tailwindcss": "^3.4.10",
-    "typescript": "^5.5.4"
+    "@astrojs/mdx": "^8.0.2",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.5",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
-    "prettier-plugin-astro": "^0.14.1",
-    "tailwindcss-animate": "^1.0.7"
-  }
+    "@astrojs/check": "^0.9.10",
+    "prettier": "^3.9.9",
+    "prettier-plugin-astro": "^1.1.0",
+    "typescript": "^6.0.3"
+  },
+  "packageManager": "pnpm@12.8.1+sha512.f64ba907507f5ceafe06c8d38e6052d0179444580ec1279ddd5bfc11cb48aa8a2644b66598e07e761da84872a9fc57d5f902b87fa49d024198d558612aabbe45"
 }

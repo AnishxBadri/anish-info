@@ -1,0 +1,120 @@
+---
+import FormattedDate from "../../components/FormattedDate.astro";
+import { NEWSLETTER_NAME, SUBSTACK_URL } from "../../consts";
+import Page from "../../layouts/Page.astro";
+import { getEssays } from "../../lib/content";
+
+const essays = await getEssays();
+---
+
+<Page title="Writing" description="Essays by Anish Badri." active="writing">
+  <header class="head">
+    <h1 class="display">Writing</h1>
+    <p class="lede muted">
+      Long pieces with drawings and margin notes. They live here first, then go out as a newsletter.
+    </p>
+  </header>
+
+  {
+    essays.length === 0 ? (
+      <p class="muted">Nothing here yet. Soon.</p>
+    ) : (
+      <ol class="list">
+        {essays.map((essay) => (
+          <li>
+            <a href={`/writing/${essay.id}`}>
+              <span class="date muted">
+                <FormattedDate date={essay.data.pubDate} month="short" day={false} />
+              </span>
+              <span class="body">
+                <span class="title">
+                  {essay.data.title}
+                  {essay.data.draft && <span class="draft"> · draft</span>}
+                </span>
+                <span class="desc muted">{essay.data.description}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+
+  <div slot="margin" class="aside">
+    <span class="label">Newsletter</span>
+    <span class="name">{NEWSLETTER_NAME}</span>
+    <span class="muted">Every essay here is also sent by email through Substack, plus a few shorter notes.</span>
+    {SUBSTACK_URL && <a class="pen" href={SUBSTACK_URL}>Subscribe ↗</a>}
+  </div>
+</Page>
+
+<style>
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 56px;
+  }
+  .lede {
+    max-width: 520px;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    line-height: 29px;
+  }
+  .list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .list a {
+    display: flex;
+    gap: 24px;
+    padding: 20px 0;
+    border-top: 1px solid var(--color-rule);
+  }
+  .date {
+    width: 72px;
+    flex-shrink: 0;
+    font-size: 14px;
+    line-height: 26px;
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .title {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    line-height: 26px;
+  }
+  .list a:hover .title {
+    color: var(--color-pen);
+  }
+  .desc {
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .draft {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--color-pen);
+  }
+  .aside {
+    padding-top: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: var(--text-note);
+    line-height: 20px;
+  }
+  .name {
+    font-weight: 500;
+  }
+  @media (max-width: 1179px) {
+    .aside {
+      padding-top: 0;
+    }
+  }
+</style>
